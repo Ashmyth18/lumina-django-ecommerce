@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Register — LUMINA{% endblock %}
+{% block content %}
+<div style="max-width:420px; margin:4rem auto;">
+  <div style="text-align:center; margin-bottom:2.5rem;">
+    <p class="section-label">New Account</p>
+    <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:300;">Register</h1>
+  </div>
+  <div style="background:var(--obsidian); border:1px solid var(--border); border-radius:2px; padding:2.5rem;">
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label>{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="form-help">{{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center; padding:0.85rem; margin-top:0.5rem;">
+        Create Account
+      </button>
+    </form>
+    <hr class="divider">
+    <p style="text-align:center; font-size:0.85rem; color:var(--mid);">
+      Already have an account? <a href="{% url 'login' %}" style="color:var(--gold);">Sign in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} — LUMINA{% endblock %}
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a href="{% url 'order_list' %}" style="color:var(--muted); text-decoration:none; font-size:0.8rem;">← Back to Orders</a>
+</div>
+<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2.5rem; flex-wrap:wrap; gap:1rem;">
+  <div>
+    <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:300;">Order <span class="text-gold">#{{ order.id }}</span></h1>
+    <p class="text-muted" style="font-size:0.85rem; margin-top:0.3rem;">Placed on {{ order.created_at|date:"F d, Y \a\t g:i A" }}</p>
+  </div>
+  <span class="status status-{{ order.status }}" style="font-size:0.8rem; padding:0.4rem 1rem;">{{ order.get_status_display }}</span>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 300px; gap:3rem; align-items:start;">
+  <div>
+    <h2 style="font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:1.25rem;">Items Ordered</h2>
+    <div style="background:var(--obsidian); border:1px solid var(--border); border-radius:2px; overflow:hidden;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Unit Price</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+          <tr>
+            <td>
+              <a href="{% url 'product_detail' item.product.slug %}" style="color:var(--white); text-decoration:none;">
+                {{ item.product.name }}
+              </a>
+            </td>
+            <td class="mono text-mid">${{ item.price }}</td>
+            <td class="mono text-mid">{{ item.quantity }}</td>
+            <td class="mono text-gold">${{ item.subtotal }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div style="background:var(--obsidian); border:1px solid var(--border); border-radius:2px; padding:1.5rem; margin-bottom:1.25rem;">
+      <h3 style="font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;">Summary</h3>
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem; color:var(--mid);">
+        <span>Subtotal</span>
+        <span class="mono">${{ order.total_price }}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem; color:var(--mid);">
+        <span>Shipping</span>
+        <span class="mono">Free</span>
+      </div>
+      <hr class="divider" style="margin:0.75rem 0;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:0.8rem; text-transform:uppercase; color:var(--mid);">Total</span>
+        <span class="mono" style="font-size:1.4rem; color:var(--gold);">${{ order.total_price }}</span>
+      </div>
+    </div>
+
+    {% if order.shipping_address %}
+    <div style="background:var(--obsidian); border:1px solid var(--border); border-radius:2px; padding:1.5rem;">
+      <h3 style="font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem;">Ship To</h3>
+      <p style="font-size:0.85rem; color:var(--mid); white-space:pre-wrap; line-height:1.6;">{{ order.shipping_address }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

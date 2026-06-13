@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — LUMINA{% endblock %}
+{% block content %}
+<div class="page-title">
+  <h1>Checkout</h1>
+</div>
+<div style="display:grid; grid-template-columns:1fr 340px; gap:3rem; align-items:start;">
+  <div>
+    <h2 style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:300; margin-bottom:1.5rem;">Shipping Details</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" name="name" value="{{ user.get_full_name }}" required>
+      </div>
+      <div class="form-group">
+        <label>Shipping Address</label>
+        <textarea name="address" rows="4" required placeholder="Street address, city, state, zip code…"></textarea>
+      </div>
+      <button type="submit" class="btn btn-gold" style="padding:0.85rem 2.5rem; font-size:0.9rem;">
+        Place Order — ${{ cart.total }}
+      </button>
+    </form>
+  </div>
+  <div style="position:sticky; top:88px; background:var(--obsidian); border:1px solid var(--border); border-radius:2px; padding:2rem;">
+    <h3 style="font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:1.25rem;">Order Review</h3>
+    {% for item in cart.cart_items.all %}
+    <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--mid); margin-bottom:0.6rem;">
+      <span>{{ item.product.name }} × {{ item.quantity }}</span>
+      <span class="mono">${{ item.subtotal }}</span>
+    </div>
+    {% endfor %}
+    <hr class="divider">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:0.8rem; text-transform:uppercase; color:var(--mid);">Total</span>
+      <span class="mono" style="font-size:1.4rem; color:var(--gold);">${{ cart.total }}</span>
+    </div>
+  </div>
+</div>
+{% endblock %}

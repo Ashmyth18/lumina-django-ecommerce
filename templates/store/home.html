@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- HERO -->
+<section style="text-align:center; padding: 5rem 0 4rem; border-bottom: 1px solid var(--border); margin-bottom: 4rem;">
+  <p style="font-size:0.72rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;">New Arrivals — 2026 Collection</p>
+  <h1 style="font-family:'Cormorant Garamond',serif; font-size:4.5rem; font-weight:300; line-height:1.1; max-width:700px; margin:0 auto 1.5rem;">
+    Curated for the<br><em style="color:var(--gold);">Discerning Eye</em>
+  </h1>
+  <p style="color:var(--mid); max-width:460px; margin:0 auto 2.5rem; font-size:1rem; line-height:1.7;">
+    A carefully considered selection of premium products. Each piece chosen for craftsmanship, material, and longevity.
+  </p>
+  <div style="display:flex; gap:1rem; justify-content:center;">
+    <a href="{% url 'product_list' %}" class="btn btn-gold">Explore Collection</a>
+    <a href="/api/" class="btn btn-outline">Browse API</a>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+{% if categories %}
+<section style="margin-bottom:4rem;">
+  <div class="section-header">
+    <p class="section-label">Shop by</p>
+    <h2 class="section-title">Categories</h2>
+  </div>
+  <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+    {% for cat in categories %}
+    <a href="{% url 'product_list' %}?category={{ cat.slug }}"
+       style="padding:0.6rem 1.4rem; border:1px solid var(--border); border-radius:2px; text-decoration:none;
+              color:var(--light); font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase;
+              transition:all 0.2s;"
+       onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--light)'">
+      {{ cat.name }}
+    </a>
+    {% endfor %}
+    <a href="{% url 'product_list' %}"
+       style="padding:0.6rem 1.4rem; background:var(--gold); border:1px solid var(--gold); border-radius:2px;
+              text-decoration:none; color:var(--ink); font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase;">
+      All →
+    </a>
+  </div>
+</section>
+{% endif %}
+
+<!-- FEATURED -->
+{% if featured %}
+<section style="margin-bottom:4rem;">
+  <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+    <div>
+      <p class="section-label">Staff Picks</p>
+      <h2 class="section-title">Featured Products</h2>
+    </div>
+    <a href="{% url 'product_list' %}" class="btn btn-ghost btn-sm">View All</a>
+  </div>
+  <div class="product-grid">
+    {% for product in featured %}
+    <a href="{% url 'product_detail' product.slug %}" class="product-card card">
+      <div class="product-img">
+        {% if product.image_url %}
+          <img src="{{ product.image_url }}" alt="{{ product.name }}">
+        {% else %}
+          <span class="placeholder-icon">◈</span>
+        {% endif %}
+        <span class="product-badge">Featured</span>
+      </div>
+      <div class="product-info">
+        {% if product.category %}<p class="product-cat">{{ product.category.name }}</p>{% endif %}
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-price">${{ product.price }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- LATEST -->
+{% if latest %}
+<section style="margin-bottom:4rem;">
+  <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+    <div>
+      <p class="section-label">Just Arrived</p>
+      <h2 class="section-title">New Products</h2>
+    </div>
+    <a href="{% url 'product_list' %}?sort=-created_at" class="btn btn-ghost btn-sm">View All</a>
+  </div>
+  <div class="product-grid">
+    {% for product in latest %}
+    <a href="{% url 'product_detail' product.slug %}" class="product-card card">
+      <div class="product-img">
+        {% if product.image_url %}
+          <img src="{{ product.image_url }}" alt="{{ product.name }}">
+        {% else %}
+          <span class="placeholder-icon">◇</span>
+        {% endif %}
+        {% if not product.in_stock %}<span class="product-badge out">Sold Out</span>{% endif %}
+      </div>
+      <div class="product-info">
+        {% if product.category %}<p class="product-cat">{{ product.category.name }}</p>{% endif %}
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-price">${{ product.price }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if not featured and not latest %}
+<div style="text-align:center; padding:5rem 0; color:var(--muted);">
+  <p style="font-size:3rem; margin-bottom:1rem;">◈</p>
+  <p style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:var(--light); margin-bottom:0.5rem;">No products yet</p>
+  <p style="font-size:0.9rem;">Add products via the <a href="{% url 'admin:index' %}" style="color:var(--gold);">admin panel</a>.</p>
+</div>
+{% endif %}
+
+<!-- API PROMO -->
+<section style="background:var(--obsidian); border:1px solid var(--border); border-radius:2px; padding:3rem; display:flex; align-items:center; justify-content:space-between; gap:2rem; flex-wrap:wrap;">
+  <div>
+    <span class="api-badge" style="margin-bottom:0.75rem; display:inline-block;">REST API</span>
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; margin-bottom:0.5rem;">Headless Commerce Ready</h3>
+    <p style="color:var(--mid); font-size:0.9rem;">Access all products and orders through a fully-documented REST API built with Django REST Framework.</p>
+  </div>
+  <a href="/api/" class="btn btn-outline" style="flex-shrink:0;">Explore API →</a>
+</section>
+{% endblock %}

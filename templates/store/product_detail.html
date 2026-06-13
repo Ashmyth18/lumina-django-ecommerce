@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} — LUMINA{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a href="{% url 'product_list' %}" style="color:var(--muted); text-decoration:none; font-size:0.8rem; letter-spacing:0.08em;">
+    ← Back to Shop
+  </a>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; margin-bottom:4rem;">
+  <!-- IMAGE -->
+  <div style="aspect-ratio:1; background:var(--obsidian); border:1px solid var(--border); border-radius:2px;
+              display:flex; align-items:center; justify-content:center; overflow:hidden;">
+    {% if product.image_url %}
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" style="width:100%; height:100%; object-fit:cover;">
+    {% else %}
+      <span style="font-size:6rem; opacity:0.1;">◈</span>
+    {% endif %}
+  </div>
+
+  <!-- INFO -->
+  <div>
+    {% if product.category %}
+    <a href="{% url 'product_list' %}?category={{ product.category.slug }}"
+       style="font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); text-decoration:none;">
+      {{ product.category.name }}
+    </a>
+    {% endif %}
+
+    <h1 style="font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; margin:0.5rem 0 1rem; line-height:1.1;">
+      {{ product.name }}
+    </h1>
+
+    <p style="font-family:'DM Mono',monospace; font-size:2rem; color:var(--gold); margin-bottom:1.5rem;">
+      ${{ product.price }}
+    </p>
+
+    <p style="color:var(--light); line-height:1.8; margin-bottom:2rem; font-size:0.95rem;">
+      {{ product.description }}
+    </p>
+
+    <hr class="divider">
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem; font-size:0.85rem;">
+      <span style="color:var(--muted);">Availability:</span>
+      {% if product.in_stock %}
+        <span style="color:var(--success);">● In Stock ({{ product.stock }} left)</span>
+      {% else %}
+        <span style="color:var(--danger);">● Out of Stock</span>
+      {% endif %}
+    </div>
+
+    {% if product.in_stock %}
+      {% if user.is_authenticated %}
+      <form action="{% url 'add_to_cart' product.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center; padding:1rem; font-size:0.9rem;">
+          Add to Cart
+        </button>
+      </form>
+      {% else %}
+      <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-gold" style="width:100%; justify-content:center; padding:1rem; font-size:0.9rem;">
+        Sign In to Purchase
+      </a>
+      {% endif %}
+    {% else %}
+    <button class="btn btn-ghost" style="width:100%; justify-content:center; padding:1rem;" disabled>
+      Out of Stock
+    </button>
+    {% endif %}
+
+    <div style="margin-top:2rem; padding:1rem; background:var(--obsidian); border:1px solid var(--border); border-radius:2px;">
+      <p style="font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem;">Product ID</p>
+      <p class="mono" style="font-size:0.8rem; color:var(--mid);">#{{ product.id }} — {{ product.slug }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- RELATED -->
+{% if related %}
+<hr class="divider">
+<div style="margin-top:3rem;">
+  <div class="section-header">
+    <p class="section-label">You May Also Like</p>
+    <h2 class="section-title">Related Products</h2>
+  </div>
+  <div class="product-grid">
+    {% for p in related %}
+    <a href="{% url 'product_detail' p.slug %}" class="product-card card">
+      <div class="product-img">
+        {% if p.image_url %}
+          <img src="{{ p.image_url }}" alt="{{ p.name }}">
+        {% else %}
+          <span class="placeholder-icon">◇</span>
+        {% endif %}
+      </div>
+      <div class="product-info">
+        <h3 class="product-name">{{ p.name }}</h3>
+        <p class="product-price">${{ p.price }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Orders — LUMINA{% endblock %}
+{% block content %}
+<div class="page-title">
+  <h1>My Orders</h1>
+  <p>{{ orders|length }} order{{ orders|length|pluralize }}</p>
+</div>
+{% if orders %}
+<div style="background:var(--obsidian); border:1px solid var(--border); border-radius:2px; overflow:hidden;">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Date</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td class="mono" style="color:var(--gold);">#{{ order.id }}</td>
+        <td style="color:var(--mid);">{{ order.created_at|date:"M d, Y" }}</td>
+        <td style="color:var(--mid);">{{ order.items.count }} item{{ order.items.count|pluralize }}</td>
+        <td class="mono">${{ order.total_price }}</td>
+        <td><span class="status status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+        <td><a href="{% url 'order_detail' order.id %}" class="btn btn-ghost btn-sm">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div style="text-align:center; padding:5rem 0; color:var(--muted);">
+  <p style="font-size:3rem; margin-bottom:1rem;">◇</p>
+  <p style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:var(--light); margin-bottom:1.5rem;">No orders yet</p>
+  <a href="{% url 'product_list' %}" class="btn btn-gold">Start Shopping</a>
+</div>
+{% endif %}
+{% endblock %}
